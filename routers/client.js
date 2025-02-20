@@ -12,12 +12,6 @@ async function recordReview(message){
     await fsPromises.appendFile('./postedReviews',message,{encoding:'utf-8'});
 }
 
-/*async function readRecordedReviews(){
-    let text=await fsPromises.readFile('./postedReviews',{encoding:'utf-8'});
-    let messages=text.split('\n');
-    return messages;
-}*/
-
 // ------ 
 const commitmentsFilePath='generateInputs/companyCommitments.txt';
 // localy saved list of nullifiers required from verified proofs
@@ -58,22 +52,22 @@ async function main(userPrivateKey,userMessage){
         // generating the proof
         const proof=await generateProof(userIdentity,group,message,scope);
         let nullifier=proof.nullifier;
-        //console.log(nullifier,typeof nullifier); nullifier je string
+        //console.log(nullifier,typeof nullifier); nullifier is string
         console.log('Nullifier je '+nullifier);
 
         let nullifiers=await readFile(nullifiersPath);
         nullifiers=nullifiers.split('\n');
-        console.log('List of valid nullifiers:',nullifiers);        
+        //console.log('List of valid nullifiers:',nullifiers);        
         
-        // proveravamo da li je korisnik vec ostavio recenziju ->
-        // ako jeste onda je njegov nullifier zapamcen u validNullifiers.txt
+        // we check if a user has already left a review
+        // if he has, his nullifier is recorded in validNullifiers.txt
         if(nullifiers.includes(nullifier)){
             console.log('User already left a revies! SPAM IS FORBBIDEN!');
             alreadyLeftReview=true;
         }else{
             // verifying th proof
             let ret=await verifyProof(proof);
-            console.log(ret);
+            //console.log(ret);
 
             if(ret){
                 canLeaveReview=true;
@@ -116,18 +110,15 @@ router.post('/review', function (req,res,next){
         keyValid=false;
     }
 
-    let isValid; // true ili false u zavisnosti rezultata provere sa semaforima
-                 // da li dodajemo trenutnu recenziju u sve komentare
+    let isValid;
     let alreadyLeftReview;
 
     main(privateKey,message)
-        //.then((retObj)=>console.log(retObj))
         .then( function(retObject) {
             isValid=retObject.canLeaveReview;
             alreadyLeftReview=retObject.alreadyLeftReview;
-            console.log('Ret object');
+            //console.log('Ret object',retObject);
 
-            // tu cela obrada?!?!?
             if(isValid && keyValid){
                 // record this review in a file containing all previous valid reviews
                 recordReview(message+"\n");
@@ -146,7 +137,7 @@ router.post('/review', function (req,res,next){
                 fsPromises.readFile('./postedReviews',{encoding:'utf-8'})
                         .then( function (data){
                             let messages=data.split('\n');
-                            console.log(messages);
+                            //console.log(messages);
                             let last=messages.pop();
         
                             res.render('response.ejs',{
@@ -160,50 +151,8 @@ router.post('/review', function (req,res,next){
                         .catch((err)=> console.error('Error while reading postedReviews.'));
             }
         })
-        .catch((err)=>console.error('Jebes ti meni sve'));
-                 
-                 
-    //isValid=true;
-    /*if(isValid && keyValid){
-        // NIJE LOSE SAMO MORAM DA ZAPAMTIM SVE VALIDNE PORUKE
-        /*res.render('response.ejs',{
-            isValid:isValid,
-            message:message
-        });*/
-
-        // record this review in a file containing all previous valid reviews
-        /*recordReview(message+"\n");
-        commentNumber+=1;
-
-    }*/
-
-    // problem ako je prvi test primer sa praznim privateKey-om
-    // ne postoji postedReviews fajl (ili je prazan)
-    /*if(commentNumber==2 && (!keyValid || !isValid)){
-        res.render('response.ejs',{
-            keyValid:keyValid,
-            isValid:isValid,
-            alreadyLeftReview:alreadyLeftReview,
-            commentNumber:commentNumber,
-            messages:[]
-        });
-    }else{
-        fsPromises.readFile('./postedReviews',{encoding:'utf-8'})
-                .then( function (data){
-                    let messages=data.split('\n');
-                    console.log(messages);
-                    let last=messages.pop();
-
-                    res.render('response.ejs',{
-                        keyValid:keyValid,
-                        isValid:isValid,
-                        alreadyLeftReview:alreadyLeftReview,
-                        commentNumber:commentNumber,
-                        messages:messages
-                    });
-                })
-                .catch((err)=> console.error('Error while reading postedReviews.'));
-    }*/
+        .catch((err)=>console.error('Error while executing main'));
+    
 });
 
 module.exports=router;
