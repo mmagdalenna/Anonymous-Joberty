@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Anonymous Joberty</title>
+        <meta charset="UTF-8"  name="viewport" content="width=device-width, initial-scale=1.0">
+        <link type="text/css" rel="stylesheet" href="stil.css">
+    </head>
+    <body>
+        <!--<div class="nav">-->
+            <div class="navContents">
+                <img src="pitcures/anonlogo.png" alt="?">
+                <p>Joberty</p>
+            </div>
+        <!--</nav>-->
+        
+        <div class="omotac"> 
+            <div class="banner"></div>
+
+            <div class="company-profile relative">
+                <div class="profile-pic">
+                    <img src="pitcures/logo.webp" alt="logo">
+                </div>
+                <div class="profile-info">
+                    <div class="name">Company</div>
+                    <div class="company-info relative">
+                    <span id="zvezda"><img src="pitcures/star.jpg" alt="*">4</span> |
+                    <span id="zaposleni">200 emploies</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info">
+                <h3>About the company</h3>
+                <p>Our IT company specializes in providing cutting-edge technology solutions to businesses of all sizes,
+                    helping them optimize operations and stay competitive in an increasingly digital world.
+                    <br>
+                    With a team of experienced developers, system engineers, and cybersecurity experts,
+                    we deliver customized IT services that enhance efficiency, security, and innovation.</p>
+            </div>
+
+            <div class="info reviews">
+                <h3>Reviews</h3>
+                <!-- Tutorijal -->
+                <div style="font-family: monospace" class="com"><span id="comment"><%= commentNumber%></span> comments</div>
+                <dic class="greeting">We are happy to hear from you!</dic>
+                
+                <div class="reviewComments" id="container">
+                    <div class="review">
+                        <img src="pitcures/anon.png" alt="?">
+                        <div class="reviewContent">
+                            <h5>Anonymous</h5>
+                            <p>This is the worst company! Do not work here!</p>
+                        </div>
+                    </div>
+                    <div class="review">
+                        <img src="pitcures/anon.png" alt="?">
+                        <div class="reviewContent">
+                            <h5>Anonymous</h5>
+                            <p>The best company ever!</p>
+                        </div>
+                    </div>         
+                    <% for(let elem of messages) { %>
+                        <div class="review">
+                            <img src="pitcures/anon.png" alt="?">
+                            <div class="reviewContent">
+                                <h5>Anonymous</h5>
+                                <p><%=elem%></p>
+                            </div>
+                        </div>
+                    <% } %>
+                    <% if(!isValid && !alreadyLeftReview) { %>
+                        <p style="color: red;">Review is not valid!</p>
+                    <% } %>
+                    <% if(alreadyLeftReview) { %>
+                        <p style="color: red;">SPAM IS FORBIDDEN!</p>
+                    <% } %>
+                    <% if(!keyValid) { %>
+                        <p style="color: red;">You did not enter private key value!</p>
+                    <% } %>                  
+                </div> <!--tu cemo smestati odgovore-->
+
+                <div class="commentBox">
+                    <img src="pitcures/anonblue.jpg" alt="?" id="anonPic">
+                    <div class="content">
+                        <form method="POST">
+                            <h4>Enter your private key:</h4>
+                            <input type="text" class="user" placeholder="private key" name="privateKey">
+                            
+                            <div class="commentInput">
+                                <input type="text" placeholder="Enter your review" class="userComment" name="message">
+                                <div class="button">
+                                    <button type="submit" id="publish" disabled>Publish</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script src="1.js"></script>
+    </body>
+</html>
